@@ -63,13 +63,13 @@ cert-manager:
 # -- DefectDojo
 defectdojo:
   # -- whether to create the namespace or not
-  createNamespace: false
-  enable: false
+  createNamespace: true
+  enable: true
   namespace: defectdojo
 
 dependency-track:
-  createNamespace: false
-  enable: false
+  createNamespace: true
+  enable: true
   namespace: dependency-track
 
 external-secrets:
@@ -84,8 +84,8 @@ fluent-bit:
   namespace: logging
 
 harbor:
-  createNamespace: false
-  enable: false
+  createNamespace: true
+  enable: true
   namespace: harbor
 
 # Harbor with High Availability
@@ -111,8 +111,8 @@ ingress-nginx-external:
   namespace: ingress-nginx-external
 
 jaeger-operator:
-  enable: false
-  createNamespace: false
+  enable: true
+  createNamespace: true
   namespace: jaeger-operator
 
 karma-dashboard:
@@ -232,40 +232,40 @@ redis-operator:
   namespace: redis-operator
 
 report-portal:
-  createNamespace: false
-  enable: false
+  createNamespace: true
+  enable: true
   namespace: report-portal
 
 sonar:
-  createNamespace: false
-  enable: false
+  createNamespace: true
+  enable: true
   namespace: sonar
 
 sonar-operator:
-  createNamespace: false
-  enable: false
+  createNamespace: true
+  enable: true
   namespace: sonar
 
 storage-class:
   enable: false
 
 tekton-cache:
-  createNamespace: false
-  enable: false
+  createNamespace: true
+  enable: true
   namespace: tekton-cache
 
 tekton:
-  createNamespace: false
-  enable: false
+  createNamespace: true
+  enable: true
   namespace: tekton-pipelines
 
 tekton-custom-task:
-  createNamespace: false
-  enable: false
+  createNamespace: true
+  enable: true
   namespace: krci
 
 tekton-dashboard:
-  createNamespace: false
+  createNamespace: true
   enable: false
   namespace: krci
 
