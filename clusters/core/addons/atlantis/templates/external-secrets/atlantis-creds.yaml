@@ -1,0 +1,31 @@
+{{- if .Values.eso.enabled }}
+{{- if .Values.atlantis.basicAuthSecretName -}}
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: atlantis-creds
+spec:
+  data:
+    - remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        key: {{ .Values.eso.secretPath }}
+        metadataPolicy: None
+        property: username
+      secretKey: username
+    - remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        key: {{ .Values.eso.secretPath }}
+        metadataPolicy: None
+        property: password
+      secretKey: password
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: {{ .Release.Name }}
+  target:
+    creationPolicy: Owner
+    deletionPolicy: Retain
+{{- end }}
+{{- end }}

@@ -49,6 +49,9 @@ EDP Cluster Addons that extend the Kubernetes Cluster Functionality
 | fluent-bit.createNamespace | bool | `false` |  |
 | fluent-bit.enable | bool | `false` |  |
 | fluent-bit.namespace | string | `"logging"` |  |
+| gitfusion.createNamespace | bool | `false` |  |
+| gitfusion.enable | bool | `false` |  |
+| gitfusion.namespace | string | `"krci"` |  |
 | harbor-ha-okd.createNamespace | bool | `false` |  |
 | harbor-ha-okd.enable | bool | `false` |  |
 | harbor-ha-okd.namespace | string | `"harbor"` |  |
@@ -103,6 +106,9 @@ EDP Cluster Addons that extend the Kubernetes Cluster Functionality
 | minio-operator.createNamespace | bool | `false` |  |
 | minio-operator.enable | bool | `false` |  |
 | minio-operator.namespace | string | `"minio-operator"` |  |
+| moon.createNamespace | bool | `false` |  |
+| moon.enable | bool | `false` |  |
+| moon.namespace | string | `"moon"` |  |
 | nexus-ce.createNamespace | bool | `false` |  |
 | nexus-ce.enable | bool | `false` |  |
 | nexus-ce.namespace | string | `"nexus"` |  |
@@ -121,9 +127,15 @@ EDP Cluster Addons that extend the Kubernetes Cluster Functionality
 | opentelemetry-operator.createNamespace | bool | `false` |  |
 | opentelemetry-operator.enable | bool | `false` |  |
 | opentelemetry-operator.namespace | string | `"opentelemetry-operator"` |  |
+| pgadmin.createNamespace | bool | `false` |  |
+| pgadmin.enable | bool | `false` |  |
+| pgadmin.namespace | string | `"pgadmin"` |  |
 | postgres-operator.createNamespace | bool | `false` |  |
 | postgres-operator.enable | bool | `false` |  |
 | postgres-operator.namespace | string | `"postgres-operator"` |  |
+| prometheus-blackbox-exporter.createNamespace | bool | `false` |  |
+| prometheus-blackbox-exporter.enable | bool | `false` |  |
+| prometheus-blackbox-exporter.namespace | string | `"monitoring"` |  |
 | prometheus-operator.createNamespace | bool | `false` |  |
 | prometheus-operator.enable | bool | `false` |  |
 | prometheus-operator.namespace | string | `"monitoring"` |  |
@@ -160,6 +172,9 @@ EDP Cluster Addons that extend the Kubernetes Cluster Functionality
 | vault-okd.createNamespace | bool | `false` |  |
 | vault-okd.enable | bool | `false` |  |
 | vault-okd.namespace | string | `"vault"` |  |
+| vault-operator.createNamespace | bool | `false` |  |
+| vault-operator.enable | bool | `false` |  |
+| vault-operator.namespace | string | `"vault"` |  |
 | vault.createNamespace | bool | `false` |  |
 | vault.enable | bool | `false` |  |
 | vault.namespace | string | `"vault"` |  |

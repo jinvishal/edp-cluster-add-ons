@@ -1,6 +1,6 @@
 # prometheus-operator
 
-![Version: 65.5.1](https://img.shields.io/badge/Version-65.5.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.77.2](https://img.shields.io/badge/AppVersion-v0.77.2-informational?style=flat-square)
+![Version: 77.6.0](https://img.shields.io/badge/Version-77.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.85.0](https://img.shields.io/badge/AppVersion-v0.85.0-informational?style=flat-square)
 
 ## Secret management
 
@@ -55,18 +55,23 @@ AWS Parameter Store structure:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://prometheus-community.github.io/helm-charts | kube-prometheus-stack | 65.5.1 |
+| https://prometheus-community.github.io/helm-charts | kube-prometheus-stack | 77.6.0 |
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| eso.aws | object | `{"region":"eu-central-1","roleArn":"arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess"}` | AWS configuration (if provider is `aws`). |
+| eso.aws.region | string | `"eu-central-1"` | AWS region. |
+| eso.aws.roleArn | string | `"arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess"` | AWS role ARN for the ExternalSecretOperator to assume. |
 | eso.enabled | bool | `true` | Install components of the ESO. |
 | eso.generic.secretStore.providerConfig | object | `{}` | Defines SecretStore provider configuration. |
-| eso.roleArn | string | `"arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess"` | Role ARN for the ExternalSecretOperator to assume. |
-| eso.secretName | string | `"/infra/core/addons/prometheus-operator"` | Value name in AWS ParameterStore, AWS SecretsManager or other Secret Store. |
-| eso.secretStoreName | string | `"aws-parameterstore"` | Defines Secret Store name. |
-| eso.type | string | `"aws"` | Defines provider type. One of `aws` or `generic`. |
+| eso.provider | string | `"aws"` | Defines provider type. One of `aws`, `generic`, or `vault`. |
+| eso.secretPath | string | `"/infra/core/addons/prometheus-operator"` | Defines the path to the secret in the provider. If provider is `vault`, this is the path must be prefixed with `secret/`. |
+| eso.vault | object | `{"mountPath":"core","role":"prometheus-operator","server":"http://vault.vault:8200"}` | Vault configuration (if provider is `vault`). |
+| eso.vault.mountPath | string | `"core"` | Mount path for the Kubernetes authentication method. |
+| eso.vault.role | string | `"prometheus-operator"` | Vault role for the Kubernetes authentication method. |
+| eso.vault.server | string | `"http://vault.vault:8200"` | Vault server URL. |
 | kube-prometheus-stack.alertmanager.alertmanagerSpec.resources.limits.memory | string | `"300Mi"` |  |
 | kube-prometheus-stack.alertmanager.alertmanagerSpec.resources.requests.cpu | string | `"10m"` |  |
 | kube-prometheus-stack.alertmanager.alertmanagerSpec.resources.requests.memory | string | `"200Mi"` |  |
@@ -124,6 +129,7 @@ AWS Parameter Store structure:
 | kube-prometheus-stack.prometheus.additionalServiceMonitors | list | `[]` |  |
 | kube-prometheus-stack.prometheus.ingress.enabled | bool | `false` |  |
 | kube-prometheus-stack.prometheus.ingress.hosts[0] | string | `"prometheus.example.com"` |  |
+| kube-prometheus-stack.prometheus.prometheusSpec.scrapeConfigNamespaceSelector | string | `nil` |  |
 | kube-prometheus-stack.prometheusOperator.resources.limits.memory | string | `"256Mi"` |  |
 | kube-prometheus-stack.prometheusOperator.resources.requests.cpu | string | `"100m"` |  |
 | kube-prometheus-stack.prometheusOperator.resources.requests.memory | string | `"128Mi"` |  |

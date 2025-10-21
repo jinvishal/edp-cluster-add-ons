@@ -1,6 +1,6 @@
 # report-portal
 
-![Version: 5.10.0](https://img.shields.io/badge/Version-5.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 23.2](https://img.shields.io/badge/AppVersion-23.2-informational?style=flat-square)
+![Version: 25.8.29](https://img.shields.io/badge/Version-25.8.29-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 25.1.8](https://img.shields.io/badge/AppVersion-25.1.8-informational?style=flat-square)
 
 ## Secret management
 
@@ -68,21 +68,26 @@ AWS Parameter Store structure:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.bitnami.com/bitnami | minio | 11.10.3 |
-| https://charts.bitnami.com/bitnami | rabbitmq | 10.3.9 |
-| https://opensearch-project.github.io/helm-charts/ | opensearch | 2.17.0 |
-| https://reportportal.io/kubernetes | reportportal | 5.10.0 |
+| https://charts.bitnami.com/bitnami | minio | 17.0.16 |
+| https://charts.bitnami.com/bitnami | rabbitmq | 16.0.11 |
+| https://opensearch-project.github.io/helm-charts/ | opensearch | 2.35.0 |
+| https://reportportal.io/kubernetes | reportportal | 25.8.29 |
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| eso.aws | object | `{"region":"eu-central-1","roleArn":"arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess"}` | AWS configuration (if provider is `aws`). |
+| eso.aws.region | string | `"eu-central-1"` | AWS region. |
+| eso.aws.roleArn | string | `"arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess"` | AWS role ARN for the ExternalSecretOperator to assume. |
 | eso.enabled | bool | `true` | Install components of the ESO. |
 | eso.generic.secretStore.providerConfig | object | `{}` | Defines SecretStore provider configuration. |
-| eso.roleArn | string | `"arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess"` | Role ARN for the ExternalSecretOperator to assume. |
-| eso.secretName | string | `"/infra/core/addons/reportportal"` | Value name in AWS ParameterStore, AWS SecretsManager or other Secret Store. |
-| eso.secretStoreName | string | `"aws-parameterstore"` | Defines Secret Store name. |
-| eso.type | string | `"aws"` | Defines provider type. One of `aws` or `generic`. |
+| eso.provider | string | `"aws"` | Defines provider type. One of `aws`, `generic`, or `vault`. |
+| eso.secretPath | string | `"/infra/core/addons/reportportal"` | Defines the path to the secret in the provider. If provider is `vault`, this is the path must be prefixed with `secret/`. |
+| eso.vault | object | `{"mountPath":"core","role":"report-portal","server":"http://vault.vault:8200"}` | Vault configuration (if provider is `vault`). |
+| eso.vault.mountPath | string | `"core"` | Mount path for the Kubernetes authentication method. |
+| eso.vault.role | string | `"report-portal"` | Vault role for the Kubernetes authentication method. |
+| eso.vault.server | string | `"http://vault.vault:8200"` | Vault server URL. |
 | minio.auth.existingSecret | string | `"reportportal-minio-creds"` |  |
 | minio.persistence.size | string | `"1Gi"` |  |
 | opensearch.extraEnvs[0].name | string | `"DISABLE_INSTALL_DEMO_CONFIG"` |  |
@@ -96,26 +101,36 @@ AWS Parameter Store structure:
 | opensearch.startupProbe.initialDelaySeconds | int | `45` |  |
 | rabbitmq.auth.existingErlangSecret | string | `"reportportal-rabbitmq-creds"` |  |
 | rabbitmq.auth.existingPasswordSecret | string | `"reportportal-rabbitmq-creds"` |  |
+| rabbitmq.extraConfiguration | string | `"max_message_size = 134217728"` |  |
+| rabbitmq.extraEnvVars[0].name | string | `"RABBITMQ_FEATURE_FLAGS"` |  |
+| rabbitmq.extraEnvVars[0].value | string | `"stream_single_active_consumer"` |  |
+| rabbitmq.extraPlugins | string | `"rabbitmq_auth_backend_ldap rabbitmq_consistent_hash_exchange rabbitmq_shovel rabbitmq_shovel_management\n"` |  |
 | rabbitmq.persistence.size | string | `"1Gi"` |  |
-| reportportal.elasticsearch.endpoint | string | `"opensearch-cluster-master.report-portal.svc.cluster.local:9200"` |  |
+| reportportal.database.endpoint | string | `"reportportal-primary.report-portal.svc.cluster.local"` |  |
+| reportportal.database.secretName | string | `"reportportal-postgresql-creds"` |  |
 | reportportal.ingress.hosts[0] | string | `"report-portal.example.com"` |  |
 | reportportal.ingress.usedomainname | bool | `true` |  |
-| reportportal.postgresql.SecretName | string | `"reportportal-postgresql-creds"` |  |
-| reportportal.postgresql.endpoint.address | string | `"reportportal-primary.report-portal.svc.cluster.local"` |  |
-| reportportal.rabbitmq.SecretName | string | `"reportportal-rabbitmq-creds"` |  |
-| reportportal.rabbitmq.endpoint.address | string | `"report-portal-rabbitmq.report-portal.svc.cluster.local"` |  |
-| reportportal.rabbitmq.endpoint.apiuser | string | `"user"` |  |
-| reportportal.rabbitmq.endpoint.user | string | `"user"` |  |
+| reportportal.minio.install | bool | `false` |  |
+| reportportal.msgbroker.apiuser | string | `"user"` |  |
+| reportportal.msgbroker.endpoint | string | `"report-portal-rabbitmq.report-portal.svc.cluster.local"` |  |
+| reportportal.msgbroker.secretName | string | `"reportportal-rabbitmq-creds"` |  |
+| reportportal.msgbroker.user | string | `"user"` |  |
+| reportportal.opensearch.install | bool | `false` |  |
+| reportportal.rabbitmq.install | bool | `false` |  |
+| reportportal.searchengine.endpoint | string | `"opensearch-cluster-master.report-portal.svc.cluster.local"` |  |
+| reportportal.searchengine.secretName | string | `nil` |  |
 | reportportal.serviceanalyzer.resources.requests.cpu | string | `"50m"` |  |
 | reportportal.serviceanalyzertrain.resources.requests.cpu | string | `"50m"` |  |
 | reportportal.serviceapi.resources.requests.cpu | string | `"50m"` |  |
 | reportportal.serviceindex.resources.requests.cpu | string | `"50m"` |  |
 | reportportal.serviceui.resources.requests.cpu | string | `"50m"` |  |
 | reportportal.storage.accesskeyName | string | `"root-user"` |  |
-| reportportal.storage.endpoint | string | `"http://report-portal-minio.report-portal.svc.cluster.local:9000"` |  |
-| reportportal.storage.endpointshort | string | `"report-portal-minio.report-portal.svc.cluster.local:9000"` |  |
+| reportportal.storage.endpoint | string | `"report-portal-minio.report-portal.svc.cluster.local"` |  |
+| reportportal.storage.endpointshort | string | `"report-portal-minio.report-portal.svc.cluster.local"` |  |
 | reportportal.storage.secretName | string | `"reportportal-minio-creds"` |  |
 | reportportal.storage.secretkeyName | string | `"root-password"` |  |
 | reportportal.storage.type | string | `"minio"` |  |
 | reportportal.uat.resources.requests.cpu | string | `"50m"` |  |
+| reportportal.uat.superadminInitPasswd.passwordKeyName | string | `"superadmin-password"` |  |
+| reportportal.uat.superadminInitPasswd.secretName | string | `"reportportal-superadmin-password"` |  |
 | saml.enabled | bool | `false` |  |

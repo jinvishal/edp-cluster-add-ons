@@ -4,6 +4,9 @@ reportportal:
       requests:
         cpu: 50m
   uat:
+    superadminInitPasswd:
+      secretName: "reportportal-superadmin-password"
+      passwordKeyName: "superadmin-password"
     resources:
       requests:
         cpu: 50m
@@ -25,27 +28,35 @@ reportportal:
         cpu: 50m
 
   rabbitmq:
-    SecretName: "reportportal-rabbitmq-creds"
-    endpoint:
-      address: report-portal-rabbitmq.report-portal.svc.cluster.local
-      user: user
-      apiuser: user
+    install: false
 
-  postgresql:
-    SecretName: "reportportal-postgresql-creds"
-    endpoint:
-      address: reportportal-primary.report-portal.svc.cluster.local
+  opensearch:
+    install: false
 
-  elasticsearch:
-    endpoint: opensearch-cluster-master.report-portal.svc.cluster.local:9200
+  minio:
+    install: false
+
+  msgbroker:
+    user: user
+    apiuser: user
+    secretName: "reportportal-rabbitmq-creds"
+    endpoint: report-portal-rabbitmq.report-portal.svc.cluster.local
+
+  database:
+    secretName: "reportportal-postgresql-creds"
+    endpoint: reportportal-primary.report-portal.svc.cluster.local
+
+  searchengine:
+    secretName:
+    endpoint: opensearch-cluster-master.report-portal.svc.cluster.local
 
   storage:
     type: minio
     secretName: "reportportal-minio-creds"
     accesskeyName: "root-user"
     secretkeyName: "root-password"
-    endpoint: http://report-portal-minio.report-portal.svc.cluster.local:9000
-    endpointshort: report-portal-minio.report-portal.svc.cluster.local:9000
+    endpoint: report-portal-minio.report-portal.svc.cluster.local
+    endpointshort: report-portal-minio.report-portal.svc.cluster.local
 
   ingress:
     # IF YOU HAVE SOME DOMAIN NAME SET INGRESS.USEDOMAINNAME to true and redefine url
@@ -65,6 +76,16 @@ rabbitmq:
     existingErlangSecret: reportportal-rabbitmq-creds
   persistence:
     size: 1Gi
+  extraEnvVars:
+    - name: RABBITMQ_FEATURE_FLAGS
+      value: stream_single_active_consumer
+  extraPlugins: >
+    rabbitmq_auth_backend_ldap
+    rabbitmq_consistent_hash_exchange
+    rabbitmq_shovel
+    rabbitmq_shovel_management
+  extraConfiguration: |-
+    max_message_size = 134217728
 
 opensearch:
   singleNode: true
@@ -101,15 +122,24 @@ saml:
 eso:
   # -- Install components of the ESO.
   enabled: true
-  # -- Defines provider type. One of `aws` or `generic`.
-  type: "aws"
-  # -- Defines Secret Store name.
-  secretStoreName: "aws-parameterstore"
-  # -- Value name in AWS ParameterStore, AWS SecretsManager or other Secret Store.
-  secretName: "/infra/core/addons/reportportal"
-  # -- Role ARN for the ExternalSecretOperator to assume.
-  roleArn: arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess
-  # Defines Secret Store configuration. Used when eso.type is set to "generic".
+  # -- Defines provider type. One of `aws`, `generic`, or `vault`.
+  provider: "aws"
+  # -- Defines the path to the secret in the provider. If provider is `vault`, this is the path must be prefixed with `secret/`.
+  secretPath: "/infra/core/addons/reportportal"
+  # -- Vault configuration (if provider is `vault`).
+  vault:
+    # -- Vault server URL.
+    server: "http://vault.vault:8200"
+    # -- Mount path for the Kubernetes authentication method.
+    mountPath: "core"
+    # -- Vault role for the Kubernetes authentication method.
+    role: report-portal
+  # -- AWS configuration (if provider is `aws`).
+  aws:
+    # -- AWS region.
+    region: "eu-central-1"
+    # -- AWS role ARN for the ExternalSecretOperator to assume.
+    roleArn: "arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess"
   generic:
     secretStore:
       # -- Defines SecretStore provider configuration.

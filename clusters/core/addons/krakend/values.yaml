@@ -21,7 +21,7 @@ krakend:
         "$schema": "https://www.krakend.io/schema/krakend.json",
         "version": 3,
         "name": "KrakenD - API Gateway",
-        "timeout": "3000ms",
+        "timeout": "6000ms",
         "cache_ttl": "300s",
         "output_encoding": "json",
         "client_tls": {
@@ -198,6 +198,151 @@ krakend:
                 }
               }
             ]
+          },
+          {
+            "endpoint": "/gitfusion/repositories",
+            "method": "GET",
+            "input_query_strings": ["*"],
+            "output_encoding": "json",
+            "extra_config": {
+              "auth/validator": {
+                "alg": "RS256",
+                "cache_duration": 3600,
+                "cache": true,
+                "disable_jwk_security": false,
+                "jwk_url": "{{ env "JWK_URL" }}"
+              }
+            },
+            "backend": [
+              {
+                "url_pattern": "/api/v1/repositories",
+                "encoding": "json",
+                "sd": "static",
+                "method": "GET",
+                "host": [
+                  "{{ env "GITFUSION_URL" }}"
+                ],
+                "extra_config": {
+                  "qos/http-cache": {}
+                }
+              }
+            ]
+          },
+          {
+            "endpoint": "/gitfusion/repository",
+            "method": "GET",
+            "input_query_strings": ["*"],
+            "output_encoding": "json",
+            "extra_config": {
+              "auth/validator": {
+                "alg": "RS256",
+                "cache_duration": 3600,
+                "cache": true,
+                "disable_jwk_security": false,
+                "jwk_url": "{{ env "JWK_URL" }}"
+              }
+            },
+            "backend": [
+              {
+                "url_pattern": "/api/v1/repository",
+                "encoding": "json",
+                "sd": "static",
+                "method": "GET",
+                "host": [
+                  "{{ env "GITFUSION_URL" }}"
+                ],
+                "extra_config": {
+                  "qos/http-cache": {}
+                }
+              }
+            ]
+          },
+          {
+            "endpoint": "/gitfusion/organizations",
+            "method": "GET",
+            "input_query_strings": ["*"],
+            "output_encoding": "json",
+            "extra_config": {
+              "auth/validator": {
+                "alg": "RS256",
+                "cache_duration": 3600,
+                "cache": true,
+                "disable_jwk_security": false,
+                "jwk_url": "{{ env "JWK_URL" }}"
+              }
+            },
+            "backend": [
+              {
+                "url_pattern": "/api/v1/user/organizations",
+                "encoding": "json",
+                "sd": "static",
+                "method": "GET",
+                "host": [
+                  "{{ env "GITFUSION_URL" }}"
+                ],
+                "extra_config": {
+                  "qos/http-cache": {}
+                }
+              }
+            ]
+          },
+          {
+            "endpoint": "/gitfusion/branches",
+            "method": "GET",
+            "input_query_strings": ["*"],
+            "output_encoding": "json",
+            "extra_config": {
+              "auth/validator": {
+                "alg": "RS256",
+                "cache_duration": 3600,
+                "cache": true,
+                "disable_jwk_security": false,
+                "jwk_url": "{{ env "JWK_URL" }}"
+              }
+            },
+            "backend": [
+              {
+                "url_pattern": "/api/v1/branches",
+                "encoding": "json",
+                "sd": "static",
+                "method": "GET",
+                "host": [
+                  "{{ env "GITFUSION_URL" }}"
+                ],
+                "extra_config": {
+                  "qos/http-cache": {}
+                }
+              }
+            ]
+          },
+          {
+            "endpoint": "/gitfusion/invalidate",
+            "method": "POST",
+            "input_query_strings": ["*"],
+            "output_encoding": "json",
+            "extra_config": {
+              "auth/validator": {
+                "alg": "RS256",
+                "cache_duration": 3600,
+                "cache": true,
+                "disable_jwk_security": false,
+                "jwk_url": "{{ env "JWK_URL" }}"
+              }
+            },
+            "backend": [
+              {
+                "url_pattern": "/api/v1/cache/invalidate",
+                "encoding": "json",
+                "sd": "static",
+                "method": "DELETE",
+                "host": [
+                  "{{ env "GITFUSION_URL" }}"
+                ],
+                "extra_config": {
+                  "qos/http-cache": {}
+                }
+              }
+            ]
           }
         ]
       }
@@ -213,15 +358,24 @@ krakend:
 eso:
   # -- Install components of the ESO.
   enabled: true
-  # -- Defines provider type. One of `aws` or `generic`.
-  type: "aws"
-  # -- Defines Secret Store name.
-  secretStoreName: "aws-parameterstore"
-  # -- Value name in AWS ParameterStore, AWS SecretsManager or other Secret Store.
-  secretName: "/infra/core/addons/krakend"
-  # -- Role ARN for the ExternalSecretOperator to assume.
-  roleArn: arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess
-  # Defines Secret Store configuration. Used when eso.type is set to "generic".
+  # -- Defines provider type. One of `aws`, `generic`, or `vault`.
+  provider: "aws"
+  # -- Defines the path to the secret in the provider. If provider is `vault`, this is the path must be prefixed with `secret/`.
+  secretPath: "/infra/core/addons/krakend"
+  # -- Vault configuration (if provider is `vault`).
+  vault:
+    # -- Vault server URL.
+    server: "http://vault.vault:8200"
+    # -- Mount path for the Kubernetes authentication method.
+    mountPath: "core"
+    # -- Vault role for the Kubernetes authentication method.
+    role: krakend
+  # -- AWS configuration (if provider is `aws`).
+  aws:
+    # -- AWS region.
+    region: "eu-central-1"
+    # -- AWS role ARN for the ExternalSecretOperator to assume.
+    roleArn: "arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess"
   generic:
     secretStore:
       # -- Defines SecretStore provider configuration.

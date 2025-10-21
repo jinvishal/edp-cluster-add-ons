@@ -1,0 +1,21 @@
+{{- if .Values.eso.enabled }}
+{{- if and .Values.sonarqube.monitoringPasscodeSecretName .Values.sonarqube.monitoringPasscodeSecretKey }}
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: monitoring-passcode
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: {{ .Release.Name }}
+  data:
+  - secretKey: monitoring-passcode
+    remoteRef:
+      conversionStrategy: Default
+      decodingStrategy: None
+      key: {{ .Values.eso.secretPath }}
+      metadataPolicy: None
+      property: monitoring-passcode
+{{- end }}
+{{- end }}

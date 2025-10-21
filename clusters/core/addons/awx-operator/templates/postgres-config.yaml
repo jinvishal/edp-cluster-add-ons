@@ -1,6 +1,5 @@
 {{- if and $.Values.AWX.enabled $.Values.AWX.postgres.enabled }}
-{{- $secretName := .Values.eso.secretName }}
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: {{ include "postgres.secretName" . }}
@@ -8,10 +7,10 @@ spec:
   refreshInterval: 1h
   secretStoreRef:
     kind: SecretStore
-    name: {{ .Values.eso.secretStoreName }}
+    name: {{ .Release.Name }}
   data:
     - remoteRef:
-        key: {{ $secretName }}
+        key: {{ .Values.eso.secretPath }}
         property: awx-operator.postgresql-password
       secretKey: postgresqlPassword
   target:

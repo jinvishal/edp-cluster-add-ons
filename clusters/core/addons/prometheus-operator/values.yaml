@@ -23,7 +23,8 @@ kube-prometheus-stack:
 
   prometheus:
     # # https://docs.kuberocketci.io/docs/operator-guide/ci/tekton-monitoring
-    # prometheusSpec:
+    prometheusSpec:
+      scrapeConfigNamespaceSelector: null
     #   additionalScrapeConfigsSecret:
     #     enabled: true
     #     name: additional-scrape-configs
@@ -86,8 +87,8 @@ kube-prometheus-stack:
       auth.generic_oauth:
         enabled: true
         client_id: grafana
-        allow_sign_up:  true
-        scopes:  openid profile email roles
+        allow_sign_up: true
+        scopes: openid profile email roles
         auth_url: "https://keycloak.example.com/auth/realms/shared/protocol/openid-connect/auth"
         token_url: "https://keycloak.example.com/auth/realms/shared/protocol/openid-connect/token"
         api_url: "https://keycloak.example.com/auth/realms/shared/protocol/openid-connect/userinfo"
@@ -117,9 +118,9 @@ kube-prometheus-stack:
         cpu: "25m"
         memory: "72Mi"
     persistence:
-        enabled: true
-        storageClassName: "gp3-retain"
-        size: 1Gi
+      enabled: true
+      storageClassName: "gp3-retain"
+      size: 1Gi
 
 # This section enables configuration for using External Secrets Operator (ESO) as the secret manager.
 # Prerequisite: Ensure that ESO is installed in the cluster.
@@ -132,15 +133,24 @@ kube-prometheus-stack:
 eso:
   # -- Install components of the ESO.
   enabled: true
-  # -- Defines provider type. One of `aws` or `generic`.
-  type: "aws"
-  # -- Defines Secret Store name.
-  secretStoreName: "aws-parameterstore"
-  # -- Value name in AWS ParameterStore, AWS SecretsManager or other Secret Store.
-  secretName: "/infra/core/addons/prometheus-operator"
-  # -- Role ARN for the ExternalSecretOperator to assume.
-  roleArn: arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess
-  # Defines Secret Store configuration. Used when eso.type is set to "generic".
+  # -- Defines provider type. One of `aws`, `generic`, or `vault`.
+  provider: "aws"
+  # -- Defines the path to the secret in the provider. If provider is `vault`, this is the path must be prefixed with `secret/`.
+  secretPath: "/infra/core/addons/prometheus-operator"
+  # -- Vault configuration (if provider is `vault`).
+  vault:
+    # -- Vault server URL.
+    server: "http://vault.vault:8200"
+    # -- Mount path for the Kubernetes authentication method.
+    mountPath: "core"
+    # -- Vault role for the Kubernetes authentication method.
+    role: prometheus-operator
+  # -- AWS configuration (if provider is `aws`).
+  aws:
+    # -- AWS region.
+    region: "eu-central-1"
+    # -- AWS role ARN for the ExternalSecretOperator to assume.
+    roleArn: "arn:aws:iam::012345678910:role/AWSIRSA_Shared_ExternalSecretOperatorAccess"
   generic:
     secretStore:
       # -- Defines SecretStore provider configuration.
