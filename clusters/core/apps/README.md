@@ -52,15 +52,14 @@ EDP Cluster Addons that extend the Kubernetes Cluster Functionality
 | gitfusion.createNamespace | bool | `false` |  |
 | gitfusion.enable | bool | `false` |  |
 | gitfusion.namespace | string | `"krci"` |  |
+| gitlab-runner | object | `{"createNamespace":false,"enable":false,"namespace":"gitlab-runner"}` | GitLab Runner |
+| harbor | object | `{"createNamespace":false,"enable":false,"namespace":"harbor"}` | Harbor |
 | harbor-ha-okd.createNamespace | bool | `false` |  |
 | harbor-ha-okd.enable | bool | `false` |  |
 | harbor-ha-okd.namespace | string | `"harbor"` |  |
 | harbor-ha.createNamespace | bool | `false` |  |
 | harbor-ha.enable | bool | `false` |  |
 | harbor-ha.namespace | string | `"harbor"` |  |
-| harbor.createNamespace | bool | `false` |  |
-| harbor.enable | bool | `false` |  |
-| harbor.namespace | string | `"harbor"` |  |
 | ingress-nginx-external.createNamespace | bool | `false` |  |
 | ingress-nginx-external.enable | bool | `false` |  |
 | ingress-nginx-external.namespace | string | `"ingress-nginx-external"` |  |
@@ -178,4 +177,7 @@ EDP Cluster Addons that extend the Kubernetes Cluster Functionality
 | vault.createNamespace | bool | `false` |  |
 | vault.enable | bool | `false` |  |
 | vault.namespace | string | `"vault"` |  |
+| velero.createNamespace | bool | `false` |  |
+| velero.enable | bool | `false` |  |
+| velero.namespace | string | `"velero"` |  |
 

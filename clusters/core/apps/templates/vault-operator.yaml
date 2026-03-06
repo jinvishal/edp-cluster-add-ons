@@ -13,7 +13,7 @@ spec:
     path: clusters/{{ .Values.clusterName }}/addons/vault-operator
     targetRevision: {{ .Values.targetRevision }}
     helm:
-      releaseName: vault-operator
+      releaseName: vault
   destination:
     name: {{ .Values.destinationServer | default "in-cluster" }}
     namespace: {{ index .Values "vault-operator" "namespace" }}

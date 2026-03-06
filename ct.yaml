@@ -26,6 +26,7 @@ chart-repos:
   - edp-stable=https://epam.github.io/edp-helm-charts/stable
   - external-secrets=https://charts.external-secrets.io
   - fluent=https://fluent.github.io/helm-charts
+  - gitlab=https://charts.gitlab.io
   - goharbor=https://helm.goharbor.io
   - grafana=https://grafana.github.io/helm-charts
   - hashicorp=https://helm.releases.hashicorp.com
@@ -46,4 +47,5 @@ chart-repos:
   - spotahome=https://spotahome.github.io/redis-operator
   - wiremind=https://wiremind.github.io/wiremind-helm-charts
   - runix=https://helm.runix.net
+  - velero=https://vmware-tanzu.github.io/helm-charts
 helm-dependency-extra-args: "--skip-refresh"
